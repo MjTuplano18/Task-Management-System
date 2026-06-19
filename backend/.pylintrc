@@ -1,0 +1,5 @@
+[MAIN]
+init-hook='import sys; sys.path.insert(0, "venv/Lib/site-packages")'
+
+[MESSAGES CONTROL]
+disable=C0114,C0115,C0116,C0103,C0301,W0611,W0613,W0621,W0603,C2801,E1102
