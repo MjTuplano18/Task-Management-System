@@ -1,322 +1,183 @@
 # Task Management System
 
-A fullstack Task Management Application that allows users to create, manage, and search tasks. Built with a **Next.js** (React) frontend and a **Python/FastAPI** backend with SQLite persistent storage.
+A fullstack Task Management application built with **Next.js** (React/TypeScript) for the frontend and **Python FastAPI** for the backend, using **SQLite** for data persistence.
 
-Users can perform full CRUD operations on tasks, search tasks by title, and filter by completion status.
+## Features
+
+- **Create Task** — Add tasks with a title and optional description
+- **Mark Complete/Incomplete** — Toggle task completion status
+- **Edit Task** — Inline editing of task title and description
+- **Delete Task** — Remove tasks with a confirmation dialog
+- **Search** — Real-time case-insensitive search by task title
+- **Filter** — Filter by All, Active, or Inactive (completed) tasks
+- **Combined Search + Filter** — Both work together (intersection of results)
+- **Pagination** — Numbered page navigation when task list grows
+
+---
 
 ## Prerequisites
 
-| Tool | Version |
-|------|---------|
-| Python | 3.10 or higher |
-| Node.js | 18 or higher |
-| npm | Included with Node.js |
+Make sure you have the following installed:
 
-No external database server is required — SQLite is used for persistence and the database file is created automatically on first run.
+| Tool | Version | Download |
+|------|---------|----------|
+| **Python** | 3.10 or higher | [python.org](https://www.python.org/downloads/) |
+| **Node.js** | 18 or higher | [nodejs.org](https://nodejs.org/) |
+| **npm** | Comes with Node.js | — |
 
-## Backend Setup
+---
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/MjTuplano18/Task-Management-System.git
+cd Task-Management-System
+```
+
+### 2. Set Up the Backend
 
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
-### Backend Dependencies
-
-Listed in `backend/requirements.txt`:
-
-- **fastapi** — Web framework for building the REST API
-- **uvicorn** — ASGI server to run the FastAPI application
-- **sqlalchemy** — ORM for database operations
-- **pydantic** — Data validation and serialization
-
-### Start the Backend Server
+### 3. Start the Backend Server
 
 ```bash
 cd backend
 uvicorn main:app --reload --port 8000
 ```
 
-The API will be available at `http://localhost:8000`.
+The API will be running at **http://localhost:8000**
 
-## Frontend Setup
+> The SQLite database (`tasks.db`) is created automatically on first startup. No manual database setup is needed.
+
+### 4. Set Up the Frontend (in a new terminal)
 
 ```bash
 cd frontend
 npm install
 ```
 
-### Frontend Dependencies
-
-Listed in `frontend/package.json`:
-
-- **next** (16.x) — React framework with server-side rendering
-- **react** (19.x) — UI component library
-- **react-dom** (19.x) — React DOM renderer
-
-Dev dependencies: TypeScript, ESLint, and type definitions for React/Node.
-
-### Environment Configuration
-
-Create a `.env.local` file in the `frontend/` directory (optional — defaults to `http://localhost:8000`):
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
-
-### Start the Frontend Server
+### 5. Start the Frontend Server
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-The frontend will be available at `http://localhost:3000`.
+The app will be running at **http://localhost:3000**
 
-## Database
+### 6. Open the App
 
-The application uses **SQLite** for persistent data storage.
-
-- The database file is automatically created at `backend/tasks.db` on first server startup.
-- No manual setup or migration is required — tables are created automatically.
-- Data persists across application restarts.
-
-## API Documentation
-
-Base URL: `http://localhost:8000`
-
-All responses use a consistent JSON structure:
-- **Success:** `{ "data": ... }`
-- **Error:** `{ "error": { "message": "..." } }`
-
-### Endpoints
-
-#### Create a Task
-
-```
-POST /api/tasks
-```
-
-**Request Body:**
-
-```json
-{
-  "title": "My Task",
-  "description": "Optional description"
-}
-```
-
-| Field | Type | Required | Constraints |
-|-------|------|----------|-------------|
-| title | string | Yes | 1–200 characters, cannot be whitespace-only |
-| description | string | No | 0–1000 characters, defaults to `""` |
-
-**Response (201 Created):**
-
-```json
-{
-  "data": {
-    "id": 1,
-    "title": "My Task",
-    "description": "Optional description",
-    "completed": false,
-    "created_at": "2025-01-01T12:00:00"
-  }
-}
-```
+Open your browser and go to **http://localhost:3000**
 
 ---
-
-#### List All Tasks
-
-```
-GET /api/tasks
-```
-
-**Query Parameters:**
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| search | string (optional) | Case-insensitive title substring match (max 200 chars) |
-| status | string (optional) | Filter by completion status: `all`, `active`, or `inactive` |
-
-**Response (200 OK):**
-
-```json
-{
-  "data": [
-    {
-      "id": 1,
-      "title": "My Task",
-      "description": "Optional description",
-      "completed": false,
-      "created_at": "2025-01-01T12:00:00"
-    }
-  ]
-}
-```
-
----
-
-#### Get a Single Task
-
-```
-GET /api/tasks/{id}
-```
-
-**Response (200 OK):**
-
-```json
-{
-  "data": {
-    "id": 1,
-    "title": "My Task",
-    "description": "Optional description",
-    "completed": false,
-    "created_at": "2025-01-01T12:00:00"
-  }
-}
-```
-
-**Response (404 Not Found):**
-
-```json
-{
-  "error": {
-    "message": "Task not found"
-  }
-}
-```
-
----
-
-#### Update a Task
-
-```
-PUT /api/tasks/{id}
-```
-
-**Request Body (all fields optional):**
-
-```json
-{
-  "title": "Updated Title",
-  "description": "Updated description",
-  "completed": true
-}
-```
-
-| Field | Type | Required | Constraints |
-|-------|------|----------|-------------|
-| title | string | No | 1–200 characters, cannot be whitespace-only |
-| description | string | No | 0–1000 characters |
-| completed | boolean | No | `true` or `false` |
-
-**Response (200 OK):**
-
-```json
-{
-  "data": {
-    "id": 1,
-    "title": "Updated Title",
-    "description": "Updated description",
-    "completed": true,
-    "created_at": "2025-01-01T12:00:00"
-  }
-}
-```
-
-**Response (404 Not Found):**
-
-```json
-{
-  "error": {
-    "message": "Task not found"
-  }
-}
-```
-
----
-
-#### Delete a Task
-
-```
-DELETE /api/tasks/{id}
-```
-
-**Response (200 OK):**
-
-```json
-{
-  "data": {
-    "message": "Task deleted successfully"
-  }
-}
-```
-
-**Response (404 Not Found):**
-
-```json
-{
-  "error": {
-    "message": "Task not found"
-  }
-}
-```
-
----
-
-### Error Responses
-
-All error responses follow this format:
-
-```json
-{
-  "error": {
-    "message": "Descriptive error message"
-  }
-}
-```
-
-| Status Code | Meaning |
-|-------------|---------|
-| 400 | Validation error (empty title, field length exceeded, invalid filter value, malformed JSON) |
-| 404 | Resource not found |
-| 500 | Internal server error |
 
 ## Project Structure
 
 ```
-Task Management System/
-├── README.md
-├── backend/
-│   ├── main.py              # FastAPI app entry point, middleware, exception handlers
-│   ├── router.py            # API route definitions
-│   ├── service.py           # Business logic layer
-│   ├── models.py            # SQLAlchemy database models
-│   ├── schemas.py           # Pydantic request/response schemas
-│   ├── database.py          # Database engine and session configuration
-│   ├── requirements.txt     # Python dependencies
-│   └── tasks.db             # SQLite database (auto-created)
-└── frontend/
-    ├── package.json         # Node.js dependencies and scripts
-    ├── next.config.ts       # Next.js configuration
-    ├── tsconfig.json        # TypeScript configuration
-    └── src/
-        ├── app/
-        │   ├── layout.tsx   # Root layout
-        │   ├── page.tsx     # Main task management page
-        │   └── globals.css  # Global styles
-        ├── api/
-        │   └── tasks.ts     # API client for backend communication
-        ├── components/
-        │   ├── TaskForm.tsx        # Task creation/editing form
-        │   ├── TaskList.tsx        # Task list container
-        │   ├── TaskItem.tsx        # Individual task display
-        │   ├── SearchBar.tsx       # Search input component
-        │   ├── FilterControls.tsx  # Status filter buttons
-        │   ├── ErrorDisplay.tsx    # Error message component
-        │   └── LoadingIndicator.tsx # Loading spinner
-        └── types/
-            └── task.ts      # TypeScript type definitions
+Task-Management-System/
+├── backend/                    # Python FastAPI server
+│   ├── main.py                # App entry point, CORS, error handlers
+│   ├── router.py              # REST API endpoint definitions
+│   ├── service.py             # Business logic (CRUD operations)
+│   ├── models.py              # SQLAlchemy database model
+│   ├── schemas.py             # Pydantic validation schemas
+│   ├── database.py            # Database connection configuration
+│   └── requirements.txt       # Python dependencies
+│
+├── frontend/                   # Next.js React application
+│   └── src/
+│       ├── app/
+│       │   ├── page.tsx       # Main page (state management, layout)
+│       │   ├── layout.tsx     # Root layout
+│       │   └── globals.css    # All styles
+│       ├── components/
+│       │   ├── TaskForm.tsx         # Task creation form
+│       │   ├── TaskItem.tsx         # Individual task display
+│       │   ├── TaskList.tsx         # Task list container
+│       │   ├── SearchBar.tsx        # Search input
+│       │   ├── FilterControls.tsx   # Status filter tabs
+│       │   ├── ErrorDisplay.tsx     # Error message component
+│       │   ├── LoadingIndicator.tsx # Loading spinner
+│       │   └── ConfirmDialog.tsx    # Delete confirmation modal
+│       ├── api/
+│       │   └── tasks.ts       # API client (HTTP requests)
+│       └── types/
+│           └── task.ts        # TypeScript type definitions
+│
+├── DOCUMENTATION.md           # Architecture & data flow docs
+├── CODE_GUIDE.md              # Code navigation guide
+└── README.md                  # This file
 ```
+
+---
+
+## API Endpoints
+
+Base URL: `http://localhost:8000`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/tasks` | List all tasks (supports `?search=` and `?status=` query params) |
+| `POST` | `/api/tasks` | Create a new task |
+| `GET` | `/api/tasks/{id}` | Get a single task |
+| `PUT` | `/api/tasks/{id}` | Update a task (partial updates supported) |
+| `DELETE` | `/api/tasks/{id}` | Delete a task |
+
+### Query Parameters for GET /api/tasks
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `search` | string (optional) | Case-insensitive title substring match |
+| `status` | string (optional) | `all`, `active`, or `inactive` |
+
+### Request/Response Format
+
+**Create Task:**
+```json
+POST /api/tasks
+Body: { "title": "Buy groceries", "description": "Milk, eggs, bread" }
+Response: { "data": { "id": 1, "title": "Buy groceries", "description": "Milk, eggs, bread", "completed": false, "created_at": "2025-01-01T12:00:00" } }
+```
+
+**Update Task:**
+```json
+PUT /api/tasks/1
+Body: { "completed": true }
+Response: { "data": { "id": 1, "title": "Buy groceries", "description": "Milk, eggs, bread", "completed": true, "created_at": "2025-01-01T12:00:00" } }
+```
+
+**Error Response:**
+```json
+{ "error": { "message": "Title cannot be empty or whitespace only" } }
+```
+
+---
+
+## Dependencies
+
+### Backend (Python)
+- **fastapi** — Web framework for the REST API
+- **uvicorn** — ASGI server to run FastAPI
+- **sqlalchemy** — ORM for database operations
+- **pydantic** — Data validation and serialization
+
+### Frontend (Node.js)
+- **next** — React framework
+- **react** / **react-dom** — UI library
+- **typescript** — Type safety
+
+---
+
+## Tech Stack Summary
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| Frontend | Next.js + React + TypeScript | User interface and interaction |
+| Backend | Python + FastAPI | REST API and business logic |
+| Database | SQLite + SQLAlchemy | Data persistence |
+| Communication | HTTP/JSON | Frontend ↔ Backend |
