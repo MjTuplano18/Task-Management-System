@@ -1,6 +1,11 @@
 # Kiro
 .kiro/
 
+# Personal docs (not for repo)
+CODE_GUIDE.md
+DOCUMENTATION.md
+FRONTEND_EXPLAINED.md
+
 # Python
 __pycache__/
 *.py[cod]
