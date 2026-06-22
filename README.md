@@ -40,18 +40,30 @@ cd Task-Management-System
 
 ```bash
 cd backend
+python -m venv venv
+```
+
+Activate the virtual environment:
+
+- **Windows (PowerShell):** `.\venv\Scripts\Activate.ps1`
+- **Windows (CMD):** `venv\Scripts\activate.bat`
+- **macOS/Linux:** `source venv/bin/activate`
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
 ### 3. Start the Backend Server
 
 ```bash
-cd backend
 uvicorn main:app --reload --port 8000
 ```
 
 The API will be running at **http://localhost:8000**
 
+> Make sure the virtual environment is activated before running this command.
 > The SQLite database (`tasks.db`) is created automatically on first startup. No manual database setup is needed.
 
 ### 4. Set Up the Frontend (in a new terminal)
